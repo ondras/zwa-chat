@@ -6,6 +6,13 @@ function distribute(data: string, sender?: WebSocket) {
 		if (socket != sender) { socket.send(data); }
 	});
 }
+
+channel.addEventListener("message", (event: MessageEvent) => {
+	const { data } = event;
+	console.log("received broadcast message", data);
+	distribute(data);
+});
+
 function handleRequest(request: Request) {
 	let upgrade = request.headers.get("upgrade") || "";
 	if (upgrade.toLowerCase() != "websocket") {
@@ -35,12 +42,4 @@ function handleRequest(request: Request) {
 	return response;
 }
 
-addEventListener("fetch", (event: FetchEvent) => {
-	event.respondWith(handleRequest(event.request));
-});
-
-channel.addEventListener("message", (event: MessageEvent) => {
-	const { data } = event;
-	console.log("received broadcast message", data);
-	distribute(data);
-});
+await listenAndServe(":8080", handleRequest);
