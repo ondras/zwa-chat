@@ -1,3 +1,6 @@
+import { serve } from "https://deno.land/std/http/server.ts";
+
+
 let sockets = new Set<WebSocket>();
 const channel = new BroadcastChannel("chat");
 
@@ -42,4 +45,4 @@ function handleRequest(request: Request) {
 	return response;
 }
 
-await listenAndServe(":8080", handleRequest);
+serve(handleRequest);
